@@ -22,7 +22,8 @@ app.get('/', function (req, res){
 
 var users = {
 
-    'alice': { snaps: [{from: 'alex', url: 'blah.com'}]},
+    'alice': { snaps: []},
+    'bob': { snaps: []},
     'alex': { snaps: []},
     'greg': { snaps: []},
     'ilya': { snaps: []}
@@ -45,8 +46,8 @@ app.post('/upload', function(req, res) {
 
         var imageName = req.files.file.name;
 
-        var from_user = imageName.split("_")[0];
-        var to_user = imageName.split("_")[1];
+        var from_user = 'alice';
+        var to_user = 'bob';
 
         console.log("From "+from_user+" to "+to_user);
 
