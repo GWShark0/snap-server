@@ -11,7 +11,7 @@ app.configure(function () {
 
 var form = "<!DOCTYPE HTML><html><body>" +
 "<form method='post' action='/upload' enctype='multipart/form-data'>" +
-"<input type='file' name='image'/>" +
+"<input type='file' name='file'/>" +
 "<input type='submit' /></form>" +
 "</body></html>";
 
@@ -45,8 +45,10 @@ app.post('/upload', function(req, res) {
 
         var imageName = req.files.file.name;
 
-        var from_user = "greg";
-        var to_user = "alice";
+        var from_user = imageName.split("_")[0];
+        var to_user = imageName.split("_")[1];
+
+        console.log("From "+from_user+" to "+to_user);
 
         // if there's an error
         if (!imageName) {
@@ -56,7 +58,7 @@ app.post('/upload', function(req, res) {
         } else {
 
             var imagePath = __dirname + IMAGES_DIR + imageName;
-            var videoName = imageName.replace(/\..+$/, '.mp4');
+            var videoName = imageName.replace(/\..{3}$/, '.mp4');
             var videoPath = __dirname + VIDEOS_DIR + videoName;
 
             // let's see it
@@ -72,6 +74,9 @@ app.post('/upload', function(req, res) {
                         console.log("IMAGE_PATH: " + imagePath);
                         console.log("VIDEO_PATH: " + videoPath);
 
+
+
+
                         users[to_user]['snaps'].push({from: from_user, url: VIDEOS_DIR + videoName});
                         console.log("Sent: " + VIDEOS_DIR + videoName +
                             " From: " + from_user +
@@ -85,21 +90,20 @@ app.post('/upload', function(req, res) {
     });
 });
 
-//app.get('/users/:name', function (req, res){
-//    res.writeHead(200, {"Content-Type": "application/json"});
-//
-//    var user = users[req.params.name];
-//
-//    console.log(user);
-//
-//    var snaps = user['snaps'];
-//
-//    if (user == undefined) {
-//        res.end("{'error':'not a user'}");
-//    } else {
-//        res.end(JSON.stringify(snaps));
-//    }
-//});
+app.get('/users/:name', function (req, res){
+   res.writeHead(200, {"Content-Type": "application/json"});
+
+   var user = users[req.params.name];
+
+   console.log(user);
+
+   if (user == undefined) {
+       res.end("{'error':'not a user'}");
+   } else {
+        var snaps = user['snaps'];
+       res.end(JSON.stringify(snaps));
+   }
+});
 
 // show some images
 app.get(IMAGES_DIR + ':file', function (req, res){
