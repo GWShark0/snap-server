@@ -23,7 +23,7 @@ var fs = require('fs');
 var IMAGES_DIR = "/uploads/images/";
 var VIDEOS_DIR = "/uploads/videos/";
 
-// post some files, yo
+// post some files
 app.post('/upload', function(req, res) {
 
 	fs.readFile(req.files.image.path, function (err, data) {
@@ -38,22 +38,30 @@ app.post('/upload', function(req, res) {
 		} else {
 
 			var newPath = __dirname + IMAGES_DIR + imageName;
+            var videoName = imageName.replace(/\..+$/, '.mp4');
 
+            // let's see it
 			fs.writeFile(newPath, data, function (err) {
 
-				// let's see it
-				res.redirect(IMAGES_DIR + imageName);
-
+				res.redirect(VIDEOS_DIR + videoName);
 			});
 		}
 	});
 });
 
-// show some files, yo
-app.get('/uploads/images/:file', function (req, res){
-	file = req.params.file;
+// show some images
+app.get(IMAGES_DIR + ':file', function (req, res){
+	var file = req.params.file;
 	var img = fs.readFileSync(__dirname + IMAGES_DIR + file);
 	res.writeHead(200, {'Content-Type': 'image/jpg' });
+	res.end(img, 'binary');
+});
+
+// show some videos
+app.get(VIDEOS_DIR + '/uploads/videos/:file', function (req, res){
+	var file = req.params.file;
+	var img = fs.readFileSync(__dirname + VIDEOS_DIR + file);
+	res.writeHead(200, {'Content-Type': 'video/mp4' });
 	res.end(img, 'binary');
 });
 
