@@ -27,3 +27,4 @@ node_modules
 .idea
 app/uploads/images/*
 app/uploads/videos/*
+app/output/*

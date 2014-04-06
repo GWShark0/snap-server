@@ -55,29 +55,31 @@ app.post('/upload', function(req, res) {
 			res.end();
 		} else {
 
-			var newPath = __dirname + IMAGES_DIR + imageName;
+			var imagePath = __dirname + IMAGES_DIR + imageName;
             var videoName = imageName.replace(/\..+$/, '.mp4');
+            var videoPath = __dirname + VIDEOS_DIR + videoName;
 
             // let's see it
-			fs.writeFile(newPath, data, function (err) {
+			fs.writeFile(imagePath, data, function (err) {
 
 
-                users[to_user]['snaps'].push({from: from_user, url: VIDEOS_DIR + videoName});
-                console.log("Sent: " + VIDEOS_DIR + videoName +
-                    " From: " + from_user +
-                    " To: " + to_user);
-                res.end('success');
+                exec('java -jar SplittyFlickerServer-0.0.1-SNAPSHOT.jar ' + imagePath + ' ' + videoPath,
+                    function callback(error, stdout, stderr){
 
+                    console.log(stdout);
+                    console.log(stderr);
 
+                        console.log("IMAGE_PATH: " + imagePath);
+                        console.log("VIDEO_PATH: " + videoPath);
 
-//                exec('java Test', function callback(error, stdout, stderr){
-//
-//                    console.log(stdout);
-//
-//
-//                    // res.redirect(VIDEOS_DIR + videoName);
-//                    res.end('success');
-//                });
+                        users[to_user]['snaps'].push({from: from_user, url: VIDEOS_DIR + videoName});
+                        console.log("Sent: " + VIDEOS_DIR + videoName +
+                            " From: " + from_user +
+                            " To: " + to_user);
+
+                    // res.redirect(VIDEOS_DIR + videoName);
+                    res.end('success');
+                });
 			});
 		}
 	});
