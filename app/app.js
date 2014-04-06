@@ -16,8 +16,8 @@ var form = "<!DOCTYPE HTML><html><body>" +
 "</body></html>";
 
 app.get('/', function (req, res){
-	res.writeHead(200, {'Content-Type': 'text/html' });
-	res.end(form);
+    res.writeHead(200, {'Content-Type': 'text/html' });
+    res.end(form);
 });
 
 var users = {
@@ -38,29 +38,29 @@ var VIDEOS_DIR = "/uploads/videos/";
 app.post('/upload', function(req, res) {
 
 
-	fs.readFile(req.files.image.path, function (err, data) {
-
-        // console.log(req.files.image.name);
+    fs.readFile(req.files.file.path, function (err, data) {
 
 
-		var imageName = req.files.image.name;
+
+
+        var imageName = req.files.file.name;
 
         var from_user = "greg";
         var to_user = "alice";
 
-		// if there's an error
-		if (!imageName) {
-			console.log("There was an error");
-			res.redirect("/");
-			res.end();
-		} else {
+        // if there's an error
+        if (!imageName) {
+            console.log("There was an error");
+            res.redirect("/");
+            res.end();
+        } else {
 
-			var imagePath = __dirname + IMAGES_DIR + imageName;
+            var imagePath = __dirname + IMAGES_DIR + imageName;
             var videoName = imageName.replace(/\..+$/, '.mp4');
             var videoPath = __dirname + VIDEOS_DIR + videoName;
 
             // let's see it
-			fs.writeFile(imagePath, data, function (err) {
+            fs.writeFile(imagePath, data, function (err) {
 
 
                 exec('java -jar SplittyFlickerServer-0.0.1-SNAPSHOT.jar ' + imagePath + ' ' + videoPath,
@@ -80,41 +80,41 @@ app.post('/upload', function(req, res) {
                     // res.redirect(VIDEOS_DIR + videoName);
                     res.end('success');
                 });
-			});
-		}
-	});
+            });
+        }
+    });
 });
 
-app.get('/users/:name', function (req, res){
-    res.writeHead(200, {"Content-Type": "application/json"});
-
-    var user = users[req.params.name];
-
-    console.log(user);
-
-    var snaps = user['snaps'];
-
-    if (user == undefined) {
-        res.end("{'error':'not a user'}");
-    } else {
-        res.end(JSON.stringify(snaps));
-    }
-});
+//app.get('/users/:name', function (req, res){
+//    res.writeHead(200, {"Content-Type": "application/json"});
+//
+//    var user = users[req.params.name];
+//
+//    console.log(user);
+//
+//    var snaps = user['snaps'];
+//
+//    if (user == undefined) {
+//        res.end("{'error':'not a user'}");
+//    } else {
+//        res.end(JSON.stringify(snaps));
+//    }
+//});
 
 // show some images
 app.get(IMAGES_DIR + ':file', function (req, res){
-	var file = req.params.file;
-	var img = fs.readFileSync(__dirname + IMAGES_DIR + file);
-	res.writeHead(200, {'Content-Type': 'image/jpg' });
-	res.end(img, 'binary');
+    var file = req.params.file;
+    var img = fs.readFileSync(__dirname + IMAGES_DIR + file);
+    res.writeHead(200, {'Content-Type': 'image/jpg' });
+    res.end(img, 'binary');
 });
 
 // show some videos
 app.get(VIDEOS_DIR + ':file', function (req, res){
-	var file = req.params.file;
-	var img = fs.readFileSync(__dirname + VIDEOS_DIR + file);
-	res.writeHead(200, {'Content-Type': 'video/mp4' });
-	res.end(img, 'binary');
+    var file = req.params.file;
+    var img = fs.readFileSync(__dirname + VIDEOS_DIR + file);
+    res.writeHead(200, {'Content-Type': 'video/mp4' });
+    res.end(img, 'binary');
 });
 
 console.log('Server listening on port 8080.');
